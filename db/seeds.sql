@@ -15,3 +15,14 @@ INSERT INTO roles (jobTitle,dept_id,salary) values
 ('Accountant', 3, 45000),
 ('Sales Representative', 3, 34000),
 ('Administrative Assistant', 3, 29000);
+
+INSERT INTO employees (fName,lName,role_id,manager_id) values
+('Adelaide', 'Pace', 4, null ),
+('Samual', 'Henry', 3, null),
+('Alia', 'Irwin', 9, 1),
+('Ho', 'Chapman', 11, 6),
+('Tyreese', 'Rosa', 10, 1),
+('Shayna', 'Castaneda',6, null),
+('Maheen', 'Ashton',1, null),
+('Jolene', 'Montes',10, 1),
+('Malak', 'Bains',7, 1);

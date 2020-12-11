@@ -11,19 +11,22 @@ const connection = mysql.createConnection({
     database: 'company'
 });
 
+// Connect to db and start CLI
 connection.connect(err => {
     if (err) throw err;
-    //console.log('Connected as id ' + connection.threadId);
+    console.log('Connected as id ' + connection.threadId);
     startMenu();
 });
 
+console.log(`
+╔===========╗
+║  EMPLOYEE ║
+║  MANAGER  ║
+╚===========╝
+`);
+
 const startMenu = () => {
-    console.log(`
-    ╔===========╗
-    ║  EMPLOYEE ║
-    ║  MANAGER  ║
-    ╚===========╝
-    `);
+
     inquirer
         .prompt([
             {
@@ -31,78 +34,154 @@ const startMenu = () => {
                 name: 'task',
                 message: 'What would you like to do?',
                 choices: [
-                    'View all departments',
-                    'View all roles',
-                    'View all employees',
-                    'Add a department',
-                    'Add a role',
-                    'Add an employee',
-                    'Update an employee role',
-                    'End'
-                ]
+                    'View ALL Departments',
+                    'View ALL Roles',
+                    'View ALL Employees',
+                    new inquirer.Separator(),
+                    'Add Department',
+                    'Add Role',
+                    'Add Employee',
+                    new inquirer.Separator(),
+                    'Update Employee Role',
+                    'End Application'
+                ],
             }
         ]).then(startTask => {
             //console.log(startTask.task);
-            const task = startTask.task;
-            switch(task) {
-                case 'View all departments':
+            // Function to call based on option chosen
+            switch(startTask.task) {
+                case 'View ALL Departments':
                     viewDept();
                     break;
                 
-                case 'View all roles':
+                case 'View ALL Roles':
                     viewRoles();
                     break;
 
-                case 'View all employees':
+                case 'View ALL Employees':
                     viewEmp();
                     break;
 
-                case 'Add a department':
+                case 'Add Department':
                     addDept();
                     break;
 
-                case 'Add a role':
+                case 'Add Role':
                     addRole();
                     break;
 
-                case 'Add an employee':
+                case 'Add Employee':
                     addEmp();
                     break;
 
-                case 'Update an employee role':
+                case 'Update Employee Role':
                     updateEmp();
                     break;
                 
-                case 'End':
+                case 'End Application':
                     end();
                     break;
             }
         })
 };
 
-// View all departments
+// View ALL Departments
 const viewDept = () => {
-    connection.query('SELECT * FROM departments',
+    connection.query('SELECT id, deptName AS Department FROM departments',
     function(err, results, fields) {
+        if (err) throw err;
         //console.log("Results: ",results);
-        console.table(results);
+        console.table('\n', results, '\n');
         //console.log("Fields: ",fields);
+        startMenu();
     })
-    startMenu();
+    
 };
 
+// View ALL Roles
 const viewRoles = () => {
     connection.query('SELECT * FROM roles',
-    function(err, results, fields) {
-        console.table(results , '\n');
-    })
-    startMenu();
+        function(err, results, fields) {
+            if (err) throw err;
+            console.table(results , '\n');
+            startMenu();
+        })
+};
+
+// View ALL Employees
+const viewEmp = () => {
+    const query = `SELECT id, fName AS 'First Name', lName AS 'Last Name', role_id, manager_id FROM employees`;
+    //const sql = 'SELECT * FROM employees';
+    connection.query(query,
+        function(err,results,fields) {
+            if (err) throw err;
+            console.table('\n', results, '\n');
+            startMenu();
+        })
+};
+
+// Add a Department
+const  addDept = () => {
+    inquirer
+        .prompt({
+            name: 'depName',
+            type: 'input',
+            message: 'Please enter a Department Name:',
+            // add validation
+        })
+        .then(answer => {
+            const query = connection.query('INSERT INTO departments SET ?',
+            {
+                deptName: answer.depName,
+            },
+            function(err,res,fields) {
+                if (err) throw err;
+                console.log(res.affectedRows + ' record INSERTED');
+                startMenu();
+            });
+            console.log(query.sql);
+        })
+};
+
+// Add a Role
+const addRole = () => {
+    inquirer
+        .prompt([
+            {
+            name: 'roleName',
+            type: 'input',
+            message: 'Please enter a Job Title: ',
+            // add validation
+            },
+            {
+            name: 'salary',
+            type: 'input',
+            message: "What is the job's Salary? ",
+            },
+            {
+            name: 'roleDept',
+            type: 'list',
+            message: 'What department does the job belong to?',
+            choices: departments,
+            },
+        ])
+        .then(answer => {
+            const query = connection.query('INSERT INTO roles SET ?',
+            {
+                jobTitle: answer.roleName,
+                salary: answer.salary,
+                dept_id: answer.roleDept,
+            },
+            function(err,res,fields) {
+                if (err) throw err;
+                console.log(res.affectedRows + ' record INSERTED');
+                startMenu();
+            })
+            console.log(query.sql);
+        })
 };
 
 const end = () => {
     console.log('Thank You');
     connection.end();
 }
-
-// Initialize startMenu
-// startMenu();
