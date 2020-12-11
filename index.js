@@ -2,6 +2,10 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+// Variables
+let departmentsArray = [];
+
+
 // Create the connection to database
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -67,6 +71,7 @@ const startMenu = () => {
                     break;
 
                 case 'Add Role':
+                    getDepts();
                     addRole();
                     break;
 
@@ -92,7 +97,6 @@ const viewDept = () => {
         if (err) throw err;
         //console.log("Results: ",results);
         console.table('\n', results, '\n');
-        //console.log("Fields: ",fields);
         startMenu();
     })
     
@@ -100,7 +104,7 @@ const viewDept = () => {
 
 // View ALL Roles
 const viewRoles = () => {
-    connection.query('SELECT * FROM roles',
+    connection.query(`SELECT id AS 'ID', jobTitle AS 'Job Title', dept_id AS 'Dept ID', salary AS 'Salary' FROM roles`,
         function(err, results, fields) {
             if (err) throw err;
             console.table(results , '\n');
@@ -121,7 +125,7 @@ const viewEmp = () => {
 };
 
 // Add a Department
-const  addDept = () => {
+const addDept = () => {
     inquirer
         .prompt({
             name: 'depName',
@@ -143,8 +147,14 @@ const  addDept = () => {
         })
 };
 
+// Get departments for array - do I need this?
+const getDepts = () => {
+    
+};
+
 // Add a Role
 const addRole = () => {
+    // get departments here first for array list below?
     inquirer
         .prompt([
             {
