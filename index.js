@@ -101,7 +101,9 @@ const startMenu = () => {
                     break;
 
                 case 'Update Employee Role':
-                    //updateEmp();
+                    getEmp();
+                    getRoles();
+                    setTimeout(updateEmp, 500);
                     break;
                 
                 case 'End Application':
@@ -113,19 +115,19 @@ const startMenu = () => {
 
 // View ALL Departments
 const viewDept = () => {
-    connection.query('SELECT id, deptName AS Department FROM departments',
+    connection.query(`SELECT id AS 'ID', deptName AS Department FROM departments`,
     function(err, results, fields) {
         if (err) throw err;
         //console.log("Results: ",results);
-        console.log('\n','Company Departments');
-        console.table(results,'\n');
+        console.log('\n','-- Company Departments --');
+        console.table(results);
         startMenu();
     })
 };
 
 // View ALL Job Roles
 const viewRoles = () => {
-    let query = `SELECT roles.id AS 'ID', jobTitle AS 'Job Title', salary AS 'Salary', deptName AS 'Department  Name'
+    let query = `SELECT roles.id AS 'ID', jobTitle AS 'Job Title', salary AS 'Salary', deptName AS 'Department Name'
     FROM roles
     LEFT JOIN departments
     ON roles.dept_id = departments.id;`
@@ -133,8 +135,8 @@ const viewRoles = () => {
     connection.query(query,
         function(err, results, fields) {
             if (err) throw err;
-            console.log('\n','Employee Roles');
-            console.table(results , '\n');
+            console.log('\n','-- Employee Roles --');
+            console.table(results);
             startMenu();
         })
 };
@@ -150,8 +152,8 @@ const viewEmp = () => {
     connection.query(query,
         function(err,results,fields) {
             if (err) throw err;
-            console.log('Employees')
-            console.table(results, '\n');
+            console.log('\n','-- Employees --')
+            console.table(results);
             startMenu();
         })
 };
@@ -172,10 +174,10 @@ const addDept = () => {
             },
             function(err,res,fields) {
                 if (err) throw err;
-                console.log(res.affectedRows + ' record INSERTED');
+                console.log('\n', res.affectedRows + ' Department INSERTED','\n');
                 startMenu();
             });
-            console.log(query.sql);
+            //console.log(query.sql);
         })
 };
 
@@ -191,19 +193,11 @@ const getDepts = () => {
                 //create array of departments
                 departmentsArray.push({id:dept.id, deptName:dept.deptName});
             })
-            console.log('departmentsArray :', departmentsArray);
-            //addRole();
         });
-    //console.log("Departments2: ", departmentsArray);
 };
 
 // Add a Job Role
 const addRole = () => {
-    // get departments from database
-    //const departArray = await getDepts();
-    //console.log(departmentsArray.map(dept => dept.deptName));
-    //console.log(typeof departArray);
-    //console.log("Departments Array: ", departArray);
 
     inquirer
         .prompt([
@@ -237,10 +231,10 @@ const addRole = () => {
             },
             function(err,res,fields) {
                 if (err) throw err;
-                console.log('\n', res.affectedRows + ' record INSERTED','\n');
+                console.log('\n', res.affectedRows + ' Role INSERTED','\n');
                 startMenu();
             })
-            //console.log(query.sql);
+            
         })
 };
 
@@ -268,7 +262,7 @@ const getManagers = () => {
                     FROM employees
                     LEFT JOIN roles
                     ON employees.role_id = roles.id
-                    WHERE jobTitle LIKE '%Manager%'`;
+                    WHERE jobTitle LIKE '%Manager%';`;
     
     connection.query(query,
         function(err,results,fields){
@@ -328,21 +322,67 @@ const addEmp = () => {
         },
         function(err,res,fields) {
             if (err) throw err;
-            console.log('\n',res.affectedRows + ' record INSERTED','\n');
+            console.log('\n',res.affectedRows + ' Employee INSERTED','\n');
             startMenu();
         })
-        console.log(query.sql);
+        //console.log(query.sql);
     })
 };
 
 // Get Employees for array
 const getEmp = () => {
-    
+    let query = `SELECT id, fName, lName
+                FROM employees;`;
+    connection.query(query,
+        function(err,results,fields){
+            if (err) throw err;
+
+            results.forEach(emp => {
+                //create array of employees
+                employeesArray.push({id:emp.id, name:`${emp.fName} ${emp.lName}`});
+            })
+            //console.log("Employees Array: ",employeesArray);
+        });
 };
 
-// Update Employee
+// Update Employee Role
 const updateEmp = () => {
 
+    inquirer
+    .prompt([
+        {
+        name: 'emp_name',
+        type: 'list',
+        message: "Choose the Employee to edit: ",
+        choices: employeesArray.map(emp => emp.name),
+        },
+        {
+        name: 'emp_role',
+        type: 'list',
+        message: "Select the Employee's new Role: ",
+        choices: rolesArray.map(role => role.jobTitle),
+        },
+    ])
+    .then(answer => {
+        // Get employee and role objects based on choices
+        let empId = employeesArray.filter(emp => emp.name === answer.emp_name);
+        let roleId = rolesArray.filter(role => role.jobTitle === answer.emp_role);
+        
+        const query = connection.query('UPDATE employees SET ? WHERE ?',
+        [
+        {
+            role_id: roleId[0].id,
+        },
+        {
+            id: empId[0].id,
+        }
+        ],
+        function(err,res) {
+            if (err) throw err;
+            console.log('\n', res.affectedRows + ' employee UPDATED','\n');
+            startMenu();
+        })
+    })
 };
 
 const end = () => {
