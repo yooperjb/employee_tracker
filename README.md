@@ -16,21 +16,24 @@ The application has the following features:
 * Add a department
 * Add a job roles
 * Edit an employee role
+* Edit an employee manager
 
 ## Table of Contents
-* Installation
-* Usage
-* Contributing
-* Tests
-* Questions
+* [Installation Requirements](#install)
+* [NPM Packages](#npm)
+* [Application Usage](#usage)
+* [Tests](#tests)
+* [Questions](#questions)
 
-## Installation Requirements
+## <a name=install></a>Installation Requirements
 Employee Tracker requires [node.js](https://nodejs.org/en/) which must be installed prior to using the application. There are also package dependecies rquired which can be installed using:
 
 ```
 npm install
 ```
-### NPM Packages
+The application uses [MySQL](https://dev.mysql.com/downloads/) database which must also be installed to use. There are schema.sql and seed.sql files that can be used to build and populate a sample working company employee database. 
+
+### <a name=npm></a>NPM Packages
 * Inquirer - CLI libraray
 * MySQL - Database Engine
 * mysql2 - MySQL Node.js client
@@ -39,10 +42,23 @@ npm install
 
 ***
 
-## Usage
-
-## Contributing
+## <a name=usage></a>Application Usage
+The application can be cloned from gihub using:
+```
+git clone https://github.com/yooperjb/employee_tracker.git
+```
+Once all of the dependencies are installed, the database can be built and seeded using the following in the mysql CLI:
+```
+source db schema.sql
+source db seeds.sql
+```
+To runn the application from root use:
+```
+npm start
+```
 
 ## Tests
+No tests were completed yet for this application. 
 
 ## Questions
+Any questions or feedback regarding this project can be sent directly to my [email](mailto:jason.barnes@humboldt.edu), or submitted as outlined in the [contributing](#contributing) section. This project and others can be found at my [Github page]('https://github.com/yooperjb').
