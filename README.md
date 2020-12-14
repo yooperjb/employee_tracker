@@ -25,6 +25,9 @@ The application has the following features:
 * [Tests](#tests)
 * [Questions](#questions)
 
+## Preview
+A sample video showing the application in action can be viewed [here](https://drive.google.com/file/d/1jqQ-xLuEQvhYFPpIEQPE7vunSh29e-pN/view?usp=sharing). The project repository can be found on [github](https://github.com/yooperjb/employee_tracker). 
+
 ## <a name=install></a>Installation Requirements
 Employee Tracker requires [node.js](https://nodejs.org/en/) which must be installed prior to using the application. There are also package dependecies rquired which can be installed using:
 
@@ -47,12 +50,12 @@ The application can be cloned from gihub using:
 ```
 git clone https://github.com/yooperjb/employee_tracker.git
 ```
-Once all of the dependencies are installed, the database can be built and seeded using the following in the mysql CLI:
+Once all of the dependencies are installed, the database can be built and seeded using the following commands in the mysql CLI:
 ```
 source db schema.sql
 source db seeds.sql
 ```
-To runn the application from root use:
+To run the application, from root use:
 ```
 npm start
 ```
@@ -61,4 +64,4 @@ npm start
 No tests were completed yet for this application. 
 
 ## Questions
-Any questions or feedback regarding this project can be sent directly to my [email](mailto:jason.barnes@humboldt.edu), or submitted as outlined in the [contributing](#contributing) section. This project and others can be found at my [Github page]('https://github.com/yooperjb').
+Any questions or feedback regarding this project can be sent directly to my [email](mailto:jason.barnes@humboldt.edu). This project and others can be found at my [Github page]('https://github.com/yooperjb').
